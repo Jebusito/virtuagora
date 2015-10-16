@@ -4,9 +4,15 @@ class Usuario extends Eloquent {
     use Illuminate\Database\Eloquent\SoftDeletingTrait;
 
     //protected $table = 'usuarios';
-    protected $dates = ['deleted_at', 'fin_advertencia', 'fin_suspension'];
-    protected $hidden = ['password', 'emailed_token', 'updated_at', 'deleted_at'];
-
+    #Los datos nuevos last_login y last_login_attempt es del tipo fecha/date
+    protected $dates = ['deleted_at', 'fin_advertencia', 'fin_suspension', 'last_login', 'last_login_attempt'];
+    
+    /*
+     * Se agregaron los tres atributos de usuario nuevos a $hidden: last_login, last_login_attempt y failed_password_attempts
+     * para que el modal no envie tales datos cuando lo haga con la informacion de todo el usuario.
+     */
+    protected $hidden = ['password', 'emailed_token', 'updated_at', 'deleted_at', 'last_login', 'last_login_attempt', 'failed_password_attempts'];
+    
     public function partido() {
         return $this->belongsTo('Partido');
     }

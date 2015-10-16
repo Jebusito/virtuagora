@@ -15,6 +15,10 @@ $app->container->singleton('session', function () use ($app) {
     return new SessionManager($app->getMode());
 });
 
+$app->container->singleton('mediator', function () {
+    return new Mediator();
+});
+
 $app->container->singleton('translator', function () {
     $trans = new Symfony\Component\Translation\Translator('es');
     $trans->setFallbackLocale('es');
