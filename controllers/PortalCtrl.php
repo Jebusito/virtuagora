@@ -29,6 +29,8 @@ class PortalCtrl extends Controller {
             ->addRule('email', new Validate\Rule\MaxLength(128))
             ->addRule('password', new Validate\Rule\MaxLength(128));
         $req = $this->request;
+        
+        //PortalCtrl en vez de llamar a $this->session llama a mediator con los mismos parametros, encapsulando el comportamiento.
         if ($vdt->validate($req->post()) && $this->mediator->login($vdt->getData('email'), $vdt->getData('password'))) {
             $this->redirectTo('shwPortal');
         } else {
@@ -106,6 +108,7 @@ class PortalCtrl extends Controller {
             $usuario->es_jefe = false;
             $usuario->img_tipo = 1;
             $usuario->img_hash = md5($preuser->email);
+            //El mediador se encarga de inicializar las variables respectivas a la funcionalidad.
             $this->mediator->initVariablesReintentos($usuario);
             $usuario->save();
             $preuser->delete();

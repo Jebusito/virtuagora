@@ -4,7 +4,7 @@ class Usuario extends Eloquent {
     use Illuminate\Database\Eloquent\SoftDeletingTrait;
 
     //protected $table = 'usuarios';
-    #Los datos nuevos last_login y last_login_attempt es del tipo fecha/date
+    #Los datos nuevos last_login y last_login_attempt son del tipo fecha/date
     protected $dates = ['deleted_at', 'fin_advertencia', 'fin_suspension', 'last_login', 'last_login_attempt'];
     
     /*

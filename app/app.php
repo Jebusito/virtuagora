@@ -15,6 +15,9 @@ $app->container->singleton('session', function () use ($app) {
     return new SessionManager($app->getMode());
 });
 
+/* Registro del singleton mediator que va a encargarse de toda la funcion
+ * de bloqueo por contraseña
+ */
 $app->container->singleton('mediator', function () {
     return new Mediator();
 });
