@@ -1,32 +1,15 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- * Description of Mediator
- *
- * @author Ignacio Ramos
- */
-class Mediator {
-    #Declaramos dos variables estaticas que van a determinar los parametros del patron de bloqueo por contrasenia.
-    protected static $maxLoginAttempts, $resetTimeMinutes;
-            
-    public function __construct() {
-    #Inicializamos las variables, al ser un singleton el Mediator requiere reiniciar el servidor si se cambian.
-        $this->$maxLoginAttempts = 10;
-        $this->$resetTimeMinutes = 60;       
-    }
-    
+class Mediator extends Controller{
+  
     public function login($email, $password) {
+        static $maxLoginAttempts = 10;
+        static $resetTimeMinutes = 60;
         $usuario = Usuario::where('email', $email)->first();
         $unlockTime = $usuario->last_login_attempt;
         $unlockTime->addMinutes($resetTimeMinutes);
         $success = false;
-        if (!$usuario) { 
+        if (!$usuario) {
             return false;
         }
         if ($unlockTime->gt(Carbon\Carbon::now()) && $usuario->failed_password_attempts >= $maxLoginAttempts) {
@@ -45,20 +28,20 @@ class Mediator {
     }
     
     public function update($usuario = null) {
-        $_SESSION['user']['ultimo_login'] = $usuario->last_login;
+        $this->generarAviso($usuario);
         $usuario->last_login = Carbon\Carbon::now();
         $usuario->failed_password_attempts = 0;
     }
     
-    public function generarAviso($portal){
-        $mensaje = 'Ingresaste correctamente! Ultimo ingreso: ' + $portal->session->user('ultimo_login');
-        $intentosFallidos = $this->session->user('intentos');
+    public function generarAviso($usuario = null){
+        $ultimo_login = $usuario->last_login->format('H:i') . 'Hs del ' . $usuario->last_login->format('d-m-Y');
+        $mensaje = 'Ingresaste correctamente! Tu ultimo ingreso fue a las ' . $ultimo_login;
+        $intentosFallidos = $usuario->failed_password_attempts;
         if ($intentosFallidos == 1) {
-            $mensaje .= ' previamente se ingresó la contraseña erroneamente 1 vez.';
+            $mensaje .= '. Previamente se ingresó la contraseña erroneamente 1 vez.';
         } else if ($intentosFallidos > 1) {
-            $mensaje .= ' previamente se ingresó la contraseña erroneamente ' . $intentosFallidos . ' veces.';
+            $mensaje .= '. Previamente se ingresó la contraseña erroneamente ' . $intentosFallidos . ' veces.';
         }
         $this->flash('success', $mensaje);
-        $this->redirectTo('shwPortal');
      }
 }
