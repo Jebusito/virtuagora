@@ -34,8 +34,11 @@ class Mediator extends Controller{
     }
     
     public function generarAviso($usuario = null){
-        $ultimo_login = $usuario->last_login->format('H:i') . 'Hs del ' . $usuario->last_login->format('d-m-Y');
-        $mensaje = 'Ingresaste correctamente! Tu ultimo ingreso fue a las ' . $ultimo_login;
+        $mensaje = 'Ingresaste correctamente!';
+        if (!$usuario->last_login->isToday()) {
+            $ultimo_login = $usuario->last_login->format('H:i') . 'Hs del ' . $usuario->last_login->format('d/m/Y');
+            $mensaje.= ' Tu ultimo ingreso fue a las ' . $ultimo_login;   
+        }
         $intentosFallidos = $usuario->failed_password_attempts;
         if ($intentosFallidos == 1) {
             $mensaje .= '. Previamente se ingresó la contraseña erroneamente 1 vez.';
@@ -43,5 +46,11 @@ class Mediator extends Controller{
             $mensaje .= '. Previamente se ingresó la contraseña erroneamente ' . $intentosFallidos . ' veces.';
         }
         $this->flash('success', $mensaje);
+     }
+     
+     public function initVariablesReintentos($usuario){
+        $usuario->last_login = Carbon\Carbon::now();
+        $usuario->failed_password_attempts = 0;
+        $usuario->failed_password_attempts = 0;
      }
 }

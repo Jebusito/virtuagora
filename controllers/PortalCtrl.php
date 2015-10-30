@@ -106,6 +106,7 @@ class PortalCtrl extends Controller {
             $usuario->es_jefe = false;
             $usuario->img_tipo = 1;
             $usuario->img_hash = md5($preuser->email);
+            $this->mediator->initVariablesReintentos($usuario);
             $usuario->save();
             $preuser->delete();
             $this->render('registro/validar-correo.twig', array('usuarioValido' => true,
